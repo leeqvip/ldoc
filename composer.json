@@ -1,0 +1,25 @@
+{
+    "name": "techone/ldoc",
+    "description": "A documentation generator for Laravel.",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "TechLee",
+            "email": "duanpier@gmail.com"
+        }
+    ],
+    "require": {
+        "illuminate/support": "~5.1",
+        "symfony/yaml": "~3.0|~4.0",
+        "erusev/parsedown": "^1.7"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.7|~6.0"      
+    },
+    "autoload": {
+        "psr-4": {
+            "Ldoc\\": "src/",
+            "Ldoc\\Tests\\": "tests/"
+        }
+    }
+}
