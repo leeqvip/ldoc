@@ -63,7 +63,7 @@ class Handler
         $contentFileName = $this->pathJoin($dirName, $baseName);
         $content = $this->getContent($version, $contentFileName);
 
-        return view('ldoc::index', [
+        return [
             'css' => \file_get_contents(__DIR__.'/../resources/assets/index.css'),
             'sidebar' => $sidebar,
             'content' => $content,
@@ -73,7 +73,7 @@ class Handler
             'base_path' => $this->pathJoin('/', $this->prefixUri, $version, '/'),
             'content_file_name' => ltrim($contentFileName, '/'),
             'default_version_name' => $this->defaultVersionName,
-        ]);
+        ];
     }
 
     /**

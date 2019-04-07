@@ -24,6 +24,10 @@ class LdocServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([__DIR__.'/../storage/docs' => storage_path('docs')], 'ldoc-storage');
+        }
+
         $prefix = $this->app['config']->get('ldoc.uri_prefix');
 
         $this->app['router']->prefix($prefix)->group(function () use ($prefix) {
@@ -33,7 +37,7 @@ class LdocServiceProvider extends ServiceProvider
                     $prefix
                 );
 
-                return $handler->handle($path);
+                return view('ldoc::index', $handler->handle($path));
             })->where('path', '.*');
         });
 

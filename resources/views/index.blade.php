@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>接口文档</title>
+    <title>Ldoc - a documentation generator for Laravel.</title>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">    
     <style type="text/css">
@@ -15,7 +15,7 @@
         <header id="header" class="wrapper">
             <div id="header-inner" class="inner">
                 <h1 id="logo-wrap">                   
-                    <span>接口文档</span>
+                    <span>Documentation</span>
                 </h1>
                 <nav id="main-nav">
                 </nav>
