@@ -39,7 +39,7 @@
         <div id="content-wrap">
             <div id="content" class="wrapper">
                 <div id="content-inner">
-                    <article class="article-container" itemscope itemtype="http://schema.org/Article">
+                    <article class="article-container" itemscope >
                         <div class="article-inner">
                             <div class="article">
                                 <div class="inner">
@@ -54,6 +54,13 @@
                                     </footer>
                                 </div>
                             </div>
+                            <aside id="article-toc" role="navigation">
+                                <div id="article-toc-inner">                                
+                                    <strong class="sidebar-title">目录</strong>
+                                
+                                    <a href="#" id="article-toc-top">回到顶部</a>
+                                </div>
+                            </aside>
                         </div>
                     </article>
                     <aside id="sidebar" role="navigation">
@@ -110,47 +117,150 @@
     @endif
   </div>
 </nav>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    function toc(str, options = {}) {
+        const headingsMaxDepth = options.hasOwnProperty('max_depth') ? options.max_depth : 2;
+        const headingsSelector = ['h2', 'h3', 'h4', 'h5', 'h6'].slice(0, headingsMaxDepth).join(',');
 
-    <script type="text/javascript">
-    (function() {
-  'use strict';
+        const headings = $('<div>' + str + '<div>').find(headingsSelector);
+        if (!headings.length) return '';
 
+        const className = options.class || 'toc';
+        const listNumber = options.hasOwnProperty('list_number') ? options.list_number : false;
+        let result = `<ol class="${className}">`;
+        const lastNumber = [0, 0, 0, 0, 0, 0];
+        let firstLevel = 0;
+        let lastLevel = 0;
 
-  function changeLang() {
-    var lang = this.value;
-    var canonical = this.dataset.canonical;
-    var path = "{{$prefix_uri}}" ;
-    if(lang != '{{$default_version_name}}') path += lang + '/';
-    location.href = path + canonical;
-  }
+        function getId(ele) {
+            const id = ele.attr('id');
+            const $parent = ele.parent();
+            return id ||
+                ($parent.length < 1 ? null :
+                    getId($parent));
+        }
 
-  document.getElementById('lang-select').addEventListener('change', changeLang);
-  document.getElementById('mobile-lang-select').addEventListener('change', changeLang);
-}());
-(function() {
-  'use strict';
+        headings.each(function(index, el) {
+            const level = +$(this).prop("localName")[1];
+            const id = getId($(this));
+            const text = $(this).text();
 
-  var body = document.getElementsByTagName('body')[0];
-  var navToggle = document.getElementById('mobile-nav-toggle');
-  var dimmer = document.getElementById('mobile-nav-dimmer');
-  var CLASS_NAME = 'mobile-nav-on';
-  if (!navToggle) return;
+            lastNumber[level - 1]++;
 
-  navToggle.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    body.classList.toggle(CLASS_NAME);
-  });
+            for (let i = level; i <= 5; i++) {
+                lastNumber[i] = 0;
+            }
 
-  dimmer.addEventListener('click', function(e) {
-    if (!body.classList.contains(CLASS_NAME)) return;
+            if (firstLevel) {
+                for (let i = level; i < lastLevel; i++) {
+                    result += '</li></ol>';
+                }
 
-    e.preventDefault();
-    body.classList.remove(CLASS_NAME);
-  });
-}());
+                if (level > lastLevel) {
+                    result += `<ol class="${className}-child">`;
+                } else {
+                    result += '</li>';
+                }
+            } else {
+                firstLevel = level;
+            }
 
-    </script>
+            result += `<li class="${className}-item ${className}-level-${level}">`;
+            result += `<a class="${className}-link" href="#${id}">`;
+
+            if (listNumber) {
+                result += `<span class="${className}-number">`;
+
+                for (let i = firstLevel - 1; i < level; i++) {
+                    result += `${lastNumber[i]}.`;
+                }
+
+                result += '</span> ';
+            }
+
+            result += `<span class="${className}-text">${text}</span></a>`;
+
+            lastLevel = level;
+        });
+
+        for (let i = firstLevel - 1; i < lastLevel; i++) {
+            result += '</li></ol>';
+        }
+
+        return result;
+        }
+        articleToc = toc($(".article-content").html());
+        $("#article-toc-inner .sidebar-title").after(articleToc);
+
+        (function() {
+        'use strict';
+
+        function changeLang() {
+            var lang = this.value;
+            var canonical = this.dataset.canonical;
+            var path = "{{$prefix_uri}}";
+            if (lang != '{{$default_version_name}}') path += lang + '/';
+            location.href = path + canonical;
+        }
+
+        document.getElementById('lang-select').addEventListener('change', changeLang);
+        document.getElementById('mobile-lang-select').addEventListener('change', changeLang);
+        }());
+        (function() {
+        'use strict';
+
+        var body = document.getElementsByTagName('body')[0];
+        var navToggle = document.getElementById('mobile-nav-toggle');
+        var dimmer = document.getElementById('mobile-nav-dimmer');
+        var CLASS_NAME = 'mobile-nav-on';
+        if (!navToggle) return;
+
+        navToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            body.classList.toggle(CLASS_NAME);
+        });
+
+        dimmer.addEventListener('click', function(e) {
+            if (!body.classList.contains(CLASS_NAME)) return;
+
+            e.preventDefault();
+            body.classList.remove(CLASS_NAME);
+        });
+        }());
+
+        (function() {
+        'use strict';
+
+        var header = document.getElementById('header');
+        var toc = document.getElementById('article-toc');
+        var tocTop = document.getElementById('article-toc-top');
+        var headerHeight = header.clientHeight;
+
+        if (!toc) return;
+
+        function updateSidebarPosition() {
+            var scrollTop = document.scrollingElement.scrollTop;
+
+            if (scrollTop > headerHeight) {
+                toc.classList.add('fixed');
+            } else {
+                toc.classList.remove('fixed');
+            }
+        }
+
+        window.addEventListener('scroll', function() {
+            window.requestAnimationFrame(updateSidebarPosition);
+        });
+
+        updateSidebarPosition();
+
+        tocTop.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.scrollingElement.scrollTop = 0;
+        });
+        }());
+</script>
 </body>
-
 </html>
