@@ -2,7 +2,7 @@
 
 namespace Ldoc;
 
-use Parsedown;
+use Ldoc\Parsedown;
 use Symfony\Component\Yaml\Yaml;
 
 /**
