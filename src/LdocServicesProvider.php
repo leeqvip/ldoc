@@ -29,17 +29,20 @@ class LdocServiceProvider extends ServiceProvider
         }
 
         $prefix = $this->app['config']->get('ldoc.uri_prefix');
+        $environment = $this->app['config']->get('ldoc.environment');
 
-        $this->app['router']->prefix($prefix)->group(function () use ($prefix) {
-            Route::get('/{path?}', function ($path = '') use ($prefix) {
-                $handler = new Handler(
-                    $this->app['config']->get('ldoc.docs_dir'),
-                    $prefix
-                );
+        if (\App::environment($environment)) {
+            $this->app['router']->prefix($prefix)->group(function () use ($prefix) {
+                Route::get('/{path?}', function ($path = '') use ($prefix) {
+                    $handler = new Handler(
+                        $this->app['config']->get('ldoc.docs_dir'),
+                        $prefix
+                    );
 
-                return view('ldoc::index', $handler->handle($path));
-            })->where('path', '.*');
-        });
+                    return view('ldoc::index', $handler->handle($path));
+                })->where('path', '.*');
+            });
+        }
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'ldoc');
     }
