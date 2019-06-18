@@ -135,7 +135,7 @@
 
         const className = options.class || 'toc';
         const listNumber = options.hasOwnProperty('list_number') ? options.list_number : false;
-        let result = `<ol class="${className}">`;
+        let result = '<ol class="' + className + '">';
         const lastNumber = [0, 0, 0, 0, 0, 0];
         let firstLevel = 0;
         let lastLevel = 0;
@@ -165,7 +165,7 @@
                 }
 
                 if (level > lastLevel) {
-                    result += `<ol class="${className}-child">`;
+                    result += '<ol class="' + className + '-child">';
                 } else {
                     result += '</li>';
                 }
@@ -173,20 +173,20 @@
                 firstLevel = level;
             }
 
-            result += `<li class="${className}-item ${className}-level-${level}">`;
-            result += `<a class="${className}-link" href="#${id}">`;
+            result += '<li class="' + className + '-item ' + className + '-level-' + level+ '">';
+            result += '<a class="' + className + '-link" href="#' + id+ '">';
 
             if (listNumber) {
-                result += `<span class="${className}-number">`;
+                result += '<span class="' + className + '-number">';
 
                 for (let i = firstLevel - 1; i < level; i++) {
-                    result += `${lastNumber[i]}.`;
+                    result += lastNumber[i] + '.';
                 }
 
                 result += '</span> ';
             }
 
-            result += `<span class="${className}-text">${text}</span></a>`;
+            result += '<span class="' + className + '-text">' + text+ '</span></a>';
 
             lastLevel = level;
         });
@@ -196,11 +196,11 @@
         }
 
         return result;
-        }
-        articleToc = toc($(".article-content").html());
-        $("#article-toc-inner .sidebar-title").after(articleToc);
+    }
+    articleToc = toc($(".article-content").html());
+    $("#article-toc-inner .sidebar-title").after(articleToc);
 
-        (function() {
+    (function() {
         'use strict';
 
         function changeLang() {
