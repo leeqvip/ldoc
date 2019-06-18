@@ -106,6 +106,31 @@ class Handler
     }
 
     /**
+     * parse sidebar content.
+     *
+     * @param string $version
+     *
+     * @return void
+     */
+    protected function parseSidebar($version = '')
+    {
+        $path = 'sidebar.yml';
+        if ($version != $this->defaultVersionName) {
+            $path = $version.'/'.$path;
+        }
+
+        $path = $this->getStorageFilePath($path);
+
+        if (!is_file($path)) {
+            return [];
+        }
+
+        $sidebar = Yaml::parseFile($path);
+
+        return $sidebar;
+    }
+
+    /**
      * gets sidebar content.
      *
      * @param string $version
@@ -125,10 +150,8 @@ class Handler
             return [];
         }
 
-        $sidebar = Yaml::parseFile($path);
-
-        return $sidebar;
-    }
+        return file_get_contents($path);
+    } 
 
     /**
      * gets version.

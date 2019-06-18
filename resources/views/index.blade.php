@@ -64,14 +64,7 @@
                         </div>
                     </article>
                     <aside id="sidebar" role="navigation">
-                        <div class="inner">
-                            @foreach($sidebar as $key => $children)
-                            <strong class="sidebar-title">{{$key}}</strong>
-                            @foreach($children as $title => $child)
-                            <a href="{{$base_path}}{{$child}}" class="sidebar-link @if($content_file_name == $child) current @endif">{{$title}}</a>
-                            @endforeach
-                            @endforeach
-                        </div>
+                        <div class="inner"></div>
                     </aside>
                 </div>
             </div>
@@ -96,12 +89,6 @@
         <a href="https://github.com/" class="mobile-nav-link" rel="external" target="_blank">GitHub</a>
       </li>
     </ul> -->
-    @foreach($sidebar as $key => $children)
-    <strong class="mobile-nav-title">{{$key}}</strong>
-    @foreach($children as $title => $child)
-    <a href="{{$base_path}}{{$child}}" class="mobile-nav-link current">{{$title}}</a>
-    @endforeach
-    @endforeach
   </div>
   <div id="mobile-lang-select-wrap">
 
@@ -117,8 +104,28 @@
     @endif
   </div>
 </nav>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/esprima@4.0.1/dist/esprima.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@3.13.1/dist/js-yaml.min.js"></script>
 <script type="text/javascript">
+    var sidebar = jsyaml.load(`{{$sidebar}}`);
+    var sidebarHtml = ''
+    var mobileSidebarHtml = ''
+    var basePath = '{{$base_path}}'
+    var contentFileName = '{{$content_file_name}}'
+
+    for(var children in sidebar){
+        sidebarHtml += '<strong class="sidebar-title">' + children + '</strong>';
+        mobileSidebarHtml += '<strong class="mobile-nav-title">' + children + '</strong>';
+        for(var child in sidebar[children]){
+            current = contentFileName == sidebar[children][child] ? 'current' : '';
+            sidebarHtml += '<a href="'+basePath + sidebar[children][child] + '" class="sidebar-link toc-link '+current+'">'+child+'</a>';
+            mobileSidebarHtml += '<a href="'+basePath + sidebar[children][child] + '" class="mobile-nav-link toc-link '+current+'">'+child+'</a>';
+        }
+    } 
+    $("#sidebar .inner").html(sidebarHtml);
+    $("#mobile-nav-inner").html(mobileSidebarHtml);
+
     function toc(str, options = {}) {
         const headingsMaxDepth = options.hasOwnProperty('max_depth') ? options.max_depth : 2;
         const headingsSelector = ['h2', 'h3', 'h4', 'h5', 'h6'].slice(0, headingsMaxDepth).join(',');
