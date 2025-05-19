@@ -212,13 +212,13 @@ class Handler
      *
      * @param ...string ...$paths
      *
-     * @return void
+     * @return string
      */
-    protected function pathJoin(...$paths)
+    protected function pathJoin(...$paths): string
     {
         $path = '';
         foreach ($paths as $p) {
-            $path = rtrim($path, '/').'/'.ltrim($p, '/');
+            $path = rtrim($path, '/').'/'.ltrim(strval($p), '/');
         }
 
         return $path;

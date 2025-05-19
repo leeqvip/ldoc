@@ -1,25 +1,37 @@
 {
-    "name": "techone/ldoc",
+    "name": "leeqvip/ldoc",
     "description": "A documentation generator for Laravel.",
     "license": "Apache-2.0",
     "authors": [
         {
-            "name": "TechLee",
-            "email": "duanpier@gmail.com"
+            "name": "JonLee",
+            "email": "leeqvip@gmail.com"
         }
     ],
     "require": {
-        "illuminate/support": "~5.1",
-        "symfony/yaml": "~3.0|~4.0",
-        "erusev/parsedown": "^1.7"
+        "php": "^8.2",
+        "symfony/yaml": "^7.2",
+        "erusev/parsedown": "^1.7",
+        "illuminate/support": "^12.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~5.7|~6.0"      
+        "phpunit/phpunit": "^11.5"
     },
     "autoload": {
         "psr-4": {
-            "Ldoc\\": "src/",
+            "Ldoc\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "Ldoc\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ldoc\\LdocServiceProvider"
+            ]
         }
     }
 }

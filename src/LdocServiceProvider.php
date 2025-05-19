@@ -3,7 +3,9 @@
 namespace Ldoc;
 
 use Illuminate\Support\ServiceProvider;
-use Route;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 
 class LdocServiceProvider extends ServiceProvider
 {
@@ -25,13 +27,13 @@ class LdocServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $this->publishes([__DIR__.'/../storage/docs' => storage_path('docs')], 'ldoc-storage');
+            $this->publishes([__DIR__.'/../storage/docs' => App::storagePath('docs')], 'ldoc-storage');
         }
 
         $prefix = $this->app['config']->get('ldoc.uri_prefix');
         $environment = $this->app['config']->get('ldoc.environment');
 
-        if (\App::environment($environment)) {
+        if (App::environment($environment)) {
             $this->app['router']->prefix($prefix)->group(function () use ($prefix) {
                 Route::get('/{path?}', function ($path = '') use ($prefix) {
                     $handler = new Handler(
@@ -39,7 +41,7 @@ class LdocServiceProvider extends ServiceProvider
                         $prefix
                     );
 
-                    return view('ldoc::index', $handler->handle($path));
+                    return View::make('ldoc::index', $handler->handle($path));
                 })->where('path', '.*');
             });
         }
